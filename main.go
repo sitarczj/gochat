@@ -15,5 +15,7 @@ func main() {
 	r.GET("/messages", controllers.FindMesages)
 	r.POST("/messages", controllers.CreateMessage)
 
+	r.POST("/register", controllers.Register)
+
 	r.Run()
 }
