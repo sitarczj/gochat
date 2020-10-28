@@ -16,6 +16,7 @@ func main() {
 	r.POST("/messages", controllers.CreateMessage)
 
 	r.POST("/register", controllers.Register)
+	r.POST("/login", controllers.Login)
 
 	r.Run()
 }

@@ -14,6 +14,11 @@ type RegisterUserInput struct {
 	PlainPassword string `json:"plain_password" binding:"required"`
 }
 
+type LoginUserInput struct {
+	Username      string `json:"username" binding:"required"`
+	PlainPassword string `json:"plain_password" binding:"required"`
+}
+
 func Register(c *gin.Context) {
 	var input RegisterUserInput
 
@@ -41,7 +46,42 @@ func Register(c *gin.Context) {
 		Email:    input.Email,
 	}
 
+	models.DB.Create(&user)
+
 	c.JSON(http.StatusCreated, gin.H{
+		"data": user,
+	})
+}
+
+func Login(c *gin.Context) {
+	var input LoginUserInput
+	var user models.User
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	if err := models.DB.Where("Username = ?", input.Username).First(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User not found",
+		})
+
+		return
+	}
+
+	if !services.IsPasswordValid(input.PlainPassword, user.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid password",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
 		"data": user,
 	})
 }
