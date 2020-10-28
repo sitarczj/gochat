@@ -1,17 +1,15 @@
 package main
 
 import (
+	"gochat/models"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	models.ConnectToDatabase()
 
 	r.Run()
 }
