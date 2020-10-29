@@ -81,7 +81,16 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	authToken := services.GenerateToken()
+
+	token := models.Token{
+		UserID: user.ID,
+		Token:  authToken,
+	}
+
+	models.DB.Create(&token)
+
 	c.JSON(http.StatusOK, gin.H{
-		"data": user,
+		"token": services.GenerateToken(),
 	})
 }
